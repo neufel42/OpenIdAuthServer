@@ -1,0 +1,25 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+
+# Temporary files
+*.vs/
+.vscode/
+.idea/
+
+# Dependency directories
+node_modules/
+wwwroot/lib/
+
+# Secrets and environment settings
+appsettings.Development.json
+appsettings.*.json
+.env
