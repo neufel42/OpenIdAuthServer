@@ -30,7 +30,10 @@ builder.Services.AddOpenIddict()
         options.UseAspNetCore()
                .EnableAuthorizationEndpointPassthrough()
                .EnableTokenEndpointPassthrough();
+    }).AddValidation(options => {
+        options.UseLocalServer();
     });
+
 
 var app = builder.Build();
 
