@@ -1,7 +1,7 @@
 import { UserManager, User } from 'oidc-client-ts';
 
 const config = {
-    authority: 'http://localhost:5044', // Your OpenIddict Authorization Server URL
+    authority: 'https://localhost:7003', // Your OpenIddict Authorization Server URL
     client_id: 'react-client',
     redirect_uri: 'http://localhost:3000/callback', // Adjust for Vite's default port
     response_type: 'code',
