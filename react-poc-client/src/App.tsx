@@ -4,18 +4,43 @@ import { login, handleCallback, getUser, logout } from './authService';
 const App: React.FC = () => {
     const [user, setUser] = useState<any>(null);
 
+    const getUserClick = () => {
+
+        handleCallback()
+            .then(() => {
+                console.log("Getting user...");
+                getUser().then(setUser)
+            })
+            .catch((e) => {
+                console.error(e);
+                console.log("Redirecting to login...");
+                //login()
+            });
+    }
+
+    /*
     useEffect(() => {
         // Handle the redirect callback and get the user data
         handleCallback()
-            .then(() => getUser().then(setUser))
-            .catch(() => login());
+            .then(() => {
+                console.log("Getting user...");
+                getUser().then(setUser)
+            })
+            .catch((e) => {
+                console.error(e);
+                console.log("Redirecting to login...");
+                login()
+            });
     }, []);
-
+*/
     return (
         <div>
             <h1>React OpenIddict POC with Vite and TypeScript</h1>
             {!user ? (
+                <>
                 <button onClick={login}>Login</button>
+                <button onClick={getUserClick}>Get User</button>
+                </>
             ) : (
                 <div>
                     <p>Welcome, {user?.profile?.name}!</p>

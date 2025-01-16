@@ -27,10 +27,21 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = true;
 });
 */
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies"; // Use cookies for user authentication
+    options.DefaultChallengeScheme = "Cookies"; // Redirect to login page when unauthenticated
+})
+.AddCookie("Cookies", options =>
+{
+    options.LoginPath = "/Account/Login"; // Path to redirect if not authenticated
+}); // Add cookie-based authentication
+
 
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddOpenIddict()
     .AddCore(options =>
@@ -45,7 +56,7 @@ builder.Services.AddOpenIddict()
                .AllowRefreshTokenFlow();
 
         options.SetAuthorizationEndpointUris("/connect/authorize")
-               .SetTokenEndpointUris("/connect/token");
+               .SetTokenEndpointUris("/connect/token2");
 
         options.AddEphemeralEncryptionKey()
                .AddEphemeralSigningKey();
@@ -56,6 +67,14 @@ builder.Services.AddOpenIddict()
     }).AddValidation(options => {
         options.UseLocalServer();
     });
+
+/*
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = "XSRF-TOKEN";  // You can customize the cookie name if needed
+    options.FormFieldName = "__RequestVerificationToken";
+});
+*/
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

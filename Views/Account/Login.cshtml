@@ -1,0 +1,22 @@
+@using Microsoft.AspNetCore.Antiforgery
+@{
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<h1>Login</h1>
+
+<form method="post">
+    @Html.AntiForgeryToken()  <!-- This adds the anti-forgery token -->
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required />
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+    </div>
+    <div>
+        <button type="submit">Login</button>
+    </div>
+    <input type="hidden" name="returnUrl" value="@returnUrl" />
+</form>
