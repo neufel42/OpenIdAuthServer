@@ -2,12 +2,33 @@ using OpenIdAuthServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // React app URL
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Required for cookies or tokens in CORS
+    });
+});
 
-builder.Services.AddSingleton<MongoDbContext>();
+// Add authentication and authorization
+/*
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "Bearer";
+    options.DefaultChallengeScheme = "Bearer";
+}).AddJwtBearer("Bearer", options =>
+{
+    options.Authority = "https://localhost:7003"; // Your authorization server URL
+    options.Audience = "api";
+    options.RequireHttpsMetadata = true;
+});
+*/
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddOpenIddict()
     .AddCore(options =>
@@ -34,8 +55,21 @@ builder.Services.AddOpenIddict()
         options.UseLocalServer();
     });
 
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<MongoDbContext>();
 
 var app = builder.Build();
+
+// Use CORS
+app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseHttpsRedirection();
 
 // Call the seeder
 using (var scope = app.Services.CreateScope())
@@ -52,7 +86,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
-app.UseHttpsRedirection();
+
 
 var summaries = new[]
 {
@@ -74,7 +108,7 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-app.Run();
+await app.RunAsync();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {

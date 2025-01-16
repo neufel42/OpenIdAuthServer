@@ -5,8 +5,10 @@ const config = {
     client_id: 'react-client',
     redirect_uri: 'http://localhost:3000/callback', // Adjust for Vite's default port
     response_type: 'code',
-    scope: 'openid profile api1',
+    scope: 'profile email roles address',
 };
+
+console.log("AUTH", config);
 
 const userManager = new UserManager(config);
 
