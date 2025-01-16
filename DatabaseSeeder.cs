@@ -21,6 +21,47 @@ public static class DatabaseSeeder
             });
         }
 
+        if (await scopeManager.FindByNameAsync("profile") is null)
+        {
+            await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
+            {
+                Name = "profile",
+                DisplayName = "User Profile",
+                Resources = { "openId-api" } // Replace with the resource name associated with user data.
+            });
+        }
+
+        if (await scopeManager.FindByNameAsync("email") is null)
+        {
+            await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
+            {
+                Name = "email",
+                DisplayName = "User Email",
+                Resources = { "openId-api" } // Replace with the resource name associated with user data.
+            });
+        }
+
+        if (await scopeManager.FindByNameAsync("roles") is null)
+        {
+            await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
+            {
+                Name = "roles",
+                DisplayName = "User Roles",
+                Resources = { "openId-api" } // Replace with the resource name associated with user data.
+            });
+        }
+
+        if (await scopeManager.FindByNameAsync("address") is null)
+        {
+            await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
+            {
+                Name = "address",
+                DisplayName = "User Address",
+                Resources = { "openId-api" } // Replace with the resource name associated with user data.
+            });
+        }
+
+
         // Seed applications (clients)
         if (await appManager.FindByClientIdAsync("react-client") is null)
         {

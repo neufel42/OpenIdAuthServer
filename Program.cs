@@ -30,6 +30,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddControllers();
+
 builder.Services.AddOpenIddict()
     .AddCore(options =>
     {
@@ -66,8 +68,10 @@ var app = builder.Build();
 
 // Use CORS
 app.UseCors();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
 app.UseHttpsRedirection();
 
@@ -84,9 +88,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
-
 
 var summaries = new[]
 {
