@@ -14,7 +14,7 @@ public class TokenController : Controller
         _applicationManager = applicationManager;
     }
 
-    [HttpPost("connect/token2")]
+    [HttpPost("token")]
     public async Task<IActionResult> Token([FromForm] string code, [FromForm] string clientId)
     {
         try
@@ -30,7 +30,7 @@ public class TokenController : Controller
 }
 
 
-    [HttpPost("token2")]
+    [HttpPost("tokenBAD")]
     public async Task<IActionResult> TokenAsync()
     {
         // Extract the OpenID Connect request from the HttpContext

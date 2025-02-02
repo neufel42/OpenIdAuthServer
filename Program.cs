@@ -1,4 +1,10 @@
+using System.Security.Claims;
 using OpenIdAuthServer;
+using OpenIddict.Abstractions;
+using OpenIddict.Core;
+using OpenIddict.Server;
+using OpenIddict.Server.AspNetCore;
+using static OpenIddict.Server.OpenIddictServerEvents;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +42,11 @@ builder.Services.AddAuthentication(options =>
 {
     options.LoginPath = "/Account/Login"; // Path to redirect if not authenticated
 }); // Add cookie-based authentication
+/*
+builder.Services.AddAuthentication(options =>  {
+    options.DefaultScheme = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme;
+});
+*/
 
 
 builder.Services.AddAuthorization();
@@ -49,6 +60,10 @@ builder.Services.AddOpenIddict()
         options.UseMongoDb()
                .UseDatabase(new MongoDbContext(builder.Configuration).GetDatabase());
     })
+    .AddValidation(options => {
+        options.UseLocalServer();
+        options.UseAspNetCore();
+    })
     .AddServer(options =>
     {
         options.AllowAuthorizationCodeFlow()
@@ -56,16 +71,52 @@ builder.Services.AddOpenIddict()
                .AllowRefreshTokenFlow();
 
         options.SetAuthorizationEndpointUris("/connect/authorize")
-               .SetTokenEndpointUris("/connect/token2");
+               .SetTokenEndpointUris("/connect/token");
+
+        // Register custom authorization handler
+        options.AddEventHandler<HandleAuthorizationRequestContext>(
+            builder => builder.UseScopedHandler<CustomAuthorizationHandler>());
+
+        // Register the event handler.
+        options.AddEventHandler<OpenIddictServerEvents.ValidateTokenContext>(builder =>
+        {
+            builder.UseInlineHandler(async context =>
+            {
+                // Customize token request handling here.
+                if (context.Request.IsPasswordGrantType())
+                {
+                    // Example: Validate custom credentials.
+                    if (context.Request.Username == "customUser" && context.Request.Password == "customPassword")
+                    {
+                        context.Principal = new ClaimsPrincipal(
+                            new ClaimsIdentity(
+                                new[] { new Claim("Subject", "userId") },
+                                OpenIddictServerAspNetCoreDefaults.AuthenticationScheme
+                            )
+                        );
+
+                        // Set the requested scopes.
+                        context.Principal.SetScopes(context.Request.GetScopes());
+                    }
+                    else
+                    {
+                        context.Reject(
+                            error: "InvalidGrant",
+                            description: "Invalid username or password."
+                        );
+                    }
+                }
+
+                // Let OpenIddict handle other grant types.
+            });
+        });
 
         options.AddEphemeralEncryptionKey()
                .AddEphemeralSigningKey();
 
         options.UseAspNetCore()
-               .EnableAuthorizationEndpointPassthrough()
                .EnableTokenEndpointPassthrough();
-    }).AddValidation(options => {
-        options.UseLocalServer();
+               //.EnableAuthorizationEndpointPassthrough()
     });
 
 /*
