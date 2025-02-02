@@ -1,11 +1,9 @@
 using OpenIddict.Abstractions;
 using OpenIddict.Server;
-using OpenIddict.Server.AspNetCore;
-//using OpenIddict.Server.Events;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using static OpenIddict.Server.OpenIddictServerEvents;
 using System.Security.Claims;
+
+namespace OpenIdAuthServer.OpenIdCustom;
 
 public class CustomAuthorizationHandler : IOpenIddictServerHandler<HandleAuthorizationRequestContext>
 {
@@ -32,6 +30,7 @@ public class CustomAuthorizationHandler : IOpenIddictServerHandler<HandleAuthori
 
             context.Principal.SetScopes(OpenIddictConstants.Scopes.OpenId, OpenIddictConstants.Scopes.Profile);
 
+            await Task.CompletedTask;
             //context.HandleRequest();
         }
         else

@@ -14,11 +14,13 @@ public class TokenController : Controller
         _applicationManager = applicationManager;
     }
 
+/*
     [HttpPost("token")]
     public async Task<IActionResult> Token([FromForm] string code, [FromForm] string clientId)
     {
         try
         {
+            //var response  = await _tokenManager.ExchangeAuthorizationCodeAsync(code, clientId);
             //var response = await ExchangeAuthorizationCodeAsync(code, clientId);
             await Task.CompletedTask;
             return Ok(); // Return the tokens
@@ -27,7 +29,8 @@ public class TokenController : Controller
         {
             return BadRequest(new { error = "invalid_grant", error_description = ex.Message });
         }
-}
+    }
+    */
 
 
     [HttpPost("tokenBAD")]

@@ -12,6 +12,7 @@ const App: React.FC = () => {
                 getUser().then(setUser)
             })
             .catch((e) => {
+                console.log("Error on get user ... attempting to log and redirect to login...");
                 console.error(e);
                 console.log("Redirecting to login...");
                 //login()
@@ -43,7 +44,13 @@ const App: React.FC = () => {
                 </>
             ) : (
                 <div>
-                    <p>Welcome, {user?.profile?.name}!</p>
+                    <p>Welcome, {user?.profile?.sub}!</p>
+                    <p>profile.sub: {user?.profile?.sub}</p>
+                    <p>Access Token: {user?.access_token}</p>
+                    <p>ID Token: {user?.id_token}</p>
+                    <p>Refresh Token: {user?.refresh_token}</p>
+                    <p>expires at: {user?.expires_at}</p>
+                    <p>scope: {user?.scope}</p>
                     <button onClick={() => logout()}>Logout</button>
                 </div>
             )}

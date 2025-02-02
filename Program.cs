@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using OpenIdAuthServer;
+using OpenIdAuthServer.OpenIdCustom;
 using OpenIddict.Abstractions;
 using OpenIddict.Core;
 using OpenIddict.Server;
@@ -71,11 +72,16 @@ builder.Services.AddOpenIddict()
                .AllowRefreshTokenFlow();
 
         options.SetAuthorizationEndpointUris("/connect/authorize")
-               .SetTokenEndpointUris("/connect/token");
+               .SetTokenEndpointUris("/connect/token")
+               .SetEndSessionEndpointUris("/connect/logout");
 
         // Register custom authorization handler
         options.AddEventHandler<HandleAuthorizationRequestContext>(
             builder => builder.UseScopedHandler<CustomAuthorizationHandler>());
+
+        // Register your custom handler for end session requests.
+        options.AddEventHandler<HandleEndSessionRequestContext>(
+            builder => builder.UseScopedHandler<CustomEndSessionRequestHandler>());
 
         // Register the event handler.
         options.AddEventHandler<OpenIddictServerEvents.ValidateTokenContext>(builder =>
@@ -114,8 +120,8 @@ builder.Services.AddOpenIddict()
         options.AddEphemeralEncryptionKey()
                .AddEphemeralSigningKey();
 
-        options.UseAspNetCore()
-               .EnableTokenEndpointPassthrough();
+        options.UseAspNetCore();
+               //.EnableTokenEndpointPassthrough();
                //.EnableAuthorizationEndpointPassthrough()
     });
 
